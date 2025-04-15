@@ -1,0 +1,42 @@
+Windows 7 Forensics Documentation
+
+1. Event Log Analysis for Brute Force Attacks
+Tools Used: Windows Event Viewer, PowerShell,
+
+Steps Documented:
+
+Simulated Attack:
+Performed brute-force attempts using Hydra against Windows 7 RDP.
+
+(used command)
+hydra -t 4 -V -f -l admin -P rockyou.txt rdp://192.168.21.3
+Artifacts Analyzed:
+
+Located failed login events in Security.evtx (Event ID 4625).
+Identified source IP and timestamp patterns.
+
+Detection Rule Created:
+
+<------------PowerShell snippet to flag 5+ failed logins in 10 minutes------>
+Get-WinEvent -FilterHashtable @{LogName='Security'; ID=4625} | 
+  Group-Object -Property {$_.Properties[19].Value} | 
+  Where-Object {$_.Count -gt 5}
+
+2. Basic Malware Artifact Hunting
+Tools Used: Autoruns, Process Explorer, Wireshark
+
+Techniques Tested:
+
+Persistence Mechanisms:
+Scanned HKLM\Software\Microsoft\Windows\CurrentVersion\Run for suspicious entries.
+
+Process Analysis:
+Used Process Explorer to identify rogue processes (e.g., svchost.exe spoofing).
+
+Findings:
+Fake explorer.exe process observed with unsigned DLLs. Network traffic showed beaconing to Russian IP (VT score: 85/100).
+
+Remediation Tested:
+
+Quarantined files with Microsoft Safety Scanner.
+Rebuilt compromised registry keys.
