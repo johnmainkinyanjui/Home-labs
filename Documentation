@@ -1,0 +1,47 @@
+1. Weak Credential Identification
+Tools Used: Hydra, John the Ripper, Metasploit
+Steps Documented:
+
+Scanned for open SSH ports with nmap -p 22 171.69.21.1
+
+Ran brute-force attack:
+
+bash
+Copy
+hydra -l admin -P rockyou.txt ssh://192.168.171.69.21.1 -t 4 -vV  
+Finding: Default creds msfadmin:msfadmin granted full access.
+
+Remediation Tested:
+
+Enforced password complexity policies.
+
+Implemented fail2ban to block brute-force attempts.
+
+2. Service Hardening (FTP/SMB)
+Vulnerabilities Exploited:
+
+Anonymous FTP Access:
+
+Used ftp 171.69.21.1 → logged in anonymously → exfiltrated dummy files.
+
+SMB Misconfiguration:
+
+Exploited with Metasploit’s exploit/multi/samba/usermap_script.
+
+Remediation Steps:
+
+FTP:
+
+Disabled anonymous login in /etc/vsftpd.conf.
+
+Enabled TLS encryption.
+
+SMB:
+
+Updated Samba to latest version.
+
+Restricted shares to authorized users only.
+
+Key Learning:
+
+Misconfigured services often provide initial access. Patching and access controls are critical for aviation ground systems (e.g., baggage handling IT).
